@@ -1,5 +1,7 @@
 #include "Regra.hpp"
 
+Regra::Regra() = default;
+
 Regra::Regra(const vector<int>& inicio,
            const vector<int>& fim,
            const unordered_map<string, double>& qualisPontos,

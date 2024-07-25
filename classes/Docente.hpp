@@ -9,6 +9,7 @@
 
 using namespace std;
 
+class Publicacao;
 
 class Docente{
 private:
@@ -37,12 +38,9 @@ public:
     void set_bolsista(bool status);
     void set_coordenador(bool status);
     void set_licenciado(bool status);
-    void add_publicacao(shared_ptr<Publicacao>& publicacao);
+    void add_publicacao(Publicacao & publicacao);
 };
 
-vector<shared_ptr<Publicacao>> Docente::get_publicacoes() {
-    return this->publicacoes;
-    /// aqui não retorna por cópia
-}
+
 
 #endif

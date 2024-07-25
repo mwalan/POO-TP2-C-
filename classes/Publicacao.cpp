@@ -4,7 +4,7 @@
 
 using namespace std;
 
-Publicacao::Publicacao(int ano, string titulo, int numero, int volume, string local, int pagina_inicial, int pagina_final){
+Publicacao::Publicacao(int ano, string titulo, int numero, int volume, string local, int pagina_inicial, int pagina_final, Veiculo veiculo) : veiculo(veiculo){
     this->ano = ano;
     this->titulo = titulo;
     this->numero = numero;
@@ -18,7 +18,7 @@ int Publicacao::get_ano(){
     return this->ano;
 }
 
-shared_ptr<Veiculo> Publicacao::get_veiculo() const {
+const Veiculo &Publicacao::get_veiculo() const {
     return this->veiculo; 
 }
 
@@ -26,7 +26,7 @@ string Publicacao::get_titulo(){
     return this->titulo;
 }
 
-vector<shared_ptr<Docente>> Publicacao::get_autores(){
+const vector<Docente> & Publicacao::get_autores(){
     return this->autores;
 }
 
@@ -50,10 +50,14 @@ int Publicacao::get_pagina_final(){
     return this->pagina_final;
 }
 
-void Publicacao::set_veiculo(shared_ptr<Veiculo> novo_veiculo) {
-    this->veiculo = novo_veiculo;
-}
+// void Publicacao::set_veiculo(Veiculo & novo_veiculo) {
+//     this->veiculo = novo_veiculo;
+// }
 
 void Publicacao::add_autor(shared_ptr<Docente> autor) {
     this->autores.push_back(autor);
+}
+vector<shared_ptr<Publicacao>> Docente::get_publicacoes() {
+    return this->publicacoes;
+    /// aqui não retorna por cópia
 }

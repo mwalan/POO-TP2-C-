@@ -19,6 +19,7 @@ private:
     double pontosMinimos;
 
 public:
+    Regra();
     Regra(const vector<int>& inicio,
           const vector<int>& fim,
           const unordered_map<string, double>& qualisPontos,

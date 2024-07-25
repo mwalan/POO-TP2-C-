@@ -53,7 +53,7 @@ void Docente::set_licenciado(bool status){
     this->licenciado = status;
 }
 
-void Docente::add_publicacao(shared_ptr<Publicacao>& publicacao) {
+void Docente::add_publicacao(Publicacao & publicacao) {
     this->publicacoes.push_back(publicacao);
 }
 
