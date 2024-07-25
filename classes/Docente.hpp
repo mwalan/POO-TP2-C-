@@ -9,7 +9,9 @@
 
 using namespace std;
 
+
 class Docente{
+private:
     string codigo;
     string nome;
     vector<int> data_nascimento;
@@ -21,7 +23,6 @@ class Docente{
 
 public:
     Docente(string codigo, string nome, string data_nascimento, string data_ingresso);
-
     string get_codigo();
     string get_nome();
     vector <int> get_data_nascimento();
@@ -29,18 +30,19 @@ public:
     bool is_bolsista();
     bool is_coordenador();
     bool is_licenciado();
-    vector<shared_ptr<Publicacao>>& get_publicacoes();
+    
+    ///corrigir o retorno por referência
+    vector<shared_ptr<Publicacao>> get_publicacoes();
     
     void set_bolsista(bool status);
     void set_coordenador(bool status);
     void set_licenciado(bool status);
     void add_publicacao(shared_ptr<Publicacao>& publicacao);
-
-    
-
 };
 
-
-
+vector<shared_ptr<Publicacao>> Docente::get_publicacoes() {
+    return this->publicacoes;
+    /// aqui não retorna por cópia
+}
 
 #endif

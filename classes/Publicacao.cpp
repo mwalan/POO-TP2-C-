@@ -4,7 +4,6 @@
 
 using namespace std;
 
-
 Publicacao::Publicacao(int ano, string titulo, int numero, int volume, string local, int pagina_inicial, int pagina_final){
     this->ano = ano;
     this->titulo = titulo;
@@ -27,7 +26,7 @@ string Publicacao::get_titulo(){
     return this->titulo;
 }
 
-vector<shared_ptr<Docente>>& Publicacao::get_autores(){
+vector<shared_ptr<Docente>> Publicacao::get_autores(){
     return this->autores;
 }
 

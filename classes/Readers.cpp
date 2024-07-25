@@ -380,7 +380,6 @@ void Readers::readRegras(const string& diretorio, const vector<int>& dataRecrede
                 break;
             }
         }
-
         arquivo.close();
     } else {
         throw runtime_error("Erro ao abrir o arquivo de regras.");

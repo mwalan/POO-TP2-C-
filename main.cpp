@@ -18,6 +18,7 @@ int main(int argc, char* argv[]) {
 
         Reports::writeRelatorios(diretorio, dataRecredenciamento, ufes);
 
+    /// captura de qualquer excessão
     } catch (const exception& e) {
         
         Reports::createRelatorios("");

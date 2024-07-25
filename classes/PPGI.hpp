@@ -19,7 +19,6 @@ private:
 
 public:
     PPGI();
-
     vector<shared_ptr<Docente>>& get_docentes();
     vector<shared_ptr<Publicacao>>& get_publicacoes();
     Regra get_regra() const; 

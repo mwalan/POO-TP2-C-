@@ -7,7 +7,6 @@
 
 namespace fs = std::filesystem;
 
-
 const string Reports::RECREDENCIAMENTO = "/1-recredenciamento.csv";
 const string Reports::PUBLICACOES = "/2-publicacoes.csv";
 const string Reports::ESTATISTICAS = "/3-estatisticas.csv";
@@ -61,6 +60,7 @@ void Reports::writeRecredenciamento(const string& diretorio, const vector<int>& 
     auto periodicosNecessarios = regra.getPeriodicosNecessarios();
     int quantidadePeriodicosNecessarios = regra.getQuantidadePeriodicosNecessarios();
 
+    /// corrigir isso
     auto docentes = ufes.get_docentes();
 
     // Ordenar docentes por nome

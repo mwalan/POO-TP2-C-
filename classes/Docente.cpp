@@ -1,9 +1,7 @@
 #include "Docente.hpp"
-#include "Publicacao.hpp"
 #include "Readers.hpp"
 
 using namespace std;
-
 
 Docente::Docente(string codigo, string nome, string data_nascimento, string data_ingresso){
     this->codigo = codigo;
@@ -11,7 +9,6 @@ Docente::Docente(string codigo, string nome, string data_nascimento, string data
     Readers reader;
     this->data_nascimento = reader.reader_data(data_nascimento);
     this->data_ingresso = reader.reader_data(data_ingresso);
-    this->bolsista = false;
     this->coordenador = false;
     this->licenciado = false;
 }
@@ -42,10 +39,6 @@ bool Docente::is_coordenador(){
 
 bool Docente::is_licenciado(){
     return this->licenciado;
-}
-
-vector<shared_ptr<Publicacao>>& Docente::get_publicacoes() {
-    return this->publicacoes;
 }
 
 void Docente::set_bolsista(bool status){
