@@ -18,6 +18,8 @@ public:
 
     int getAno() const;
     string getValor() const;
+
+    Qualis operator <= (Qualis _src);
 };
 
 #endif

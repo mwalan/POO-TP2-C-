@@ -18,15 +18,15 @@ int Publicacao::get_ano(){
     return this->ano;
 }
 
-shared_ptr<Veiculo> Publicacao::get_veiculo() const {
-    return this->veiculo; 
+Veiculo Publicacao::get_veiculo() const {
+    /// arranjar um jeito de passar o veículo por cópia
 }
 
 string Publicacao::get_titulo(){
     return this->titulo;
 }
 
-vector<shared_ptr<Docente>> Publicacao::get_autores(){
+vector<Docente> Publicacao::get_autores(){
     return this->autores;
 }
 
@@ -50,10 +50,10 @@ int Publicacao::get_pagina_final(){
     return this->pagina_final;
 }
 
-void Publicacao::set_veiculo(shared_ptr<Veiculo> novo_veiculo) {
+void Publicacao::set_veiculo(Veiculo &novo_veiculo) {
     this->veiculo = novo_veiculo;
 }
 
-void Publicacao::add_autor(shared_ptr<Docente> autor) {
+void Publicacao::add_autor(Docente &autor) {
     this->autores.push_back(autor);
 }

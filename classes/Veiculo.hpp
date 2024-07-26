@@ -26,6 +26,7 @@ public:
     string getIssn() const;
     Qualis* getQualis() const;
     void setQualis(unique_ptr<Qualis> qualis);
+    Veiculo operator = (Veiculo &_src);
 };
 
 #endif

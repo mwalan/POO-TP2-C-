@@ -1,5 +1,9 @@
 #include "Veiculo.hpp"
 
+Veiculo Veiculo::operator = (Veiculo &_src){
+    return Veiculo(_src.sigla,_src.nome,_src.tipo,_src.impacto,_src.issn);
+}
+
 Veiculo::Veiculo(const string& sigla, const string& nome, const string& tipo, double impacto, const string& issn)
     : sigla(sigla), nome(nome), tipo(tipo), impacto(impacto), issn(issn), qualis(nullptr) {}
 

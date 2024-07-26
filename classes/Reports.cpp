@@ -61,7 +61,9 @@ void Reports::writeRecredenciamento(const string& diretorio, const vector<int>& 
     int quantidadePeriodicosNecessarios = regra.getQuantidadePeriodicosNecessarios();
 
     /// corrigir isso
-    auto docentes = ufes.get_docentes();
+
+    /// onde escrevo os docentes do departamento??
+    vector<Docente> docentes = ufes.get_docentes();
 
     // Ordenar docentes por nome
     sort(docentes.begin(), docentes.end(), [](const shared_ptr<Docente>& a, const shared_ptr<Docente>& b) {
