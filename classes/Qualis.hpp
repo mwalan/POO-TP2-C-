@@ -19,7 +19,8 @@ public:
     int getAno() const;
     string getValor() const;
 
-    Qualis operator <= (Qualis _src);
+    // atribuir alguma coisa ao qualis
+    // Qualis operator! (Qualis _src);
 };
 
 #endif

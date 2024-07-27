@@ -44,7 +44,7 @@ void Reports::createRelatorios(const string& diretorio) {
     }
 }
 
-void Reports::writeRecredenciamento(const string& diretorio, const vector<int>& dataRecredenciamento, const PPGI& ufes) {
+void Reports::writeRecredenciamento(const string& diretorio, const vector<int>& dataRecredenciamento, PPGI& ufes) {
     ofstream arquivo(diretorio + RECREDENCIAMENTO);
 
     if (!arquivo.is_open()) {
@@ -66,28 +66,29 @@ void Reports::writeRecredenciamento(const string& diretorio, const vector<int>& 
     vector<Docente> docentes = ufes.get_docentes();
 
     // Ordenar docentes por nome
-    sort(docentes.begin(), docentes.end(), [](const shared_ptr<Docente>& a, const shared_ptr<Docente>& b) {
-        return a->get_nome() < b->get_nome();
+    sort(docentes.begin(), docentes.end(), [](Docente& a,Docente& b) {
+        return a.get_nome() < b.get_nome();
     });
 
     for (const auto& docente : docentes) {
         double pontos = 0;
-        for (const auto& publicacao : docente->get_publicacoes()) {
-            int anoPublicacao = publicacao->get_ano();
+        for (Publicacao & publicacao : docente.get_publicacoes()) {
+            int anoPublicacao = publicacao.get_ano();
             if (anoRecredenciamento - anoPublicacao <= regra.getAnosPontos() &&
                 anoPublicacao < anoRecredenciamento) {
-                string qualis = publicacao->get_veiculo()->getQualis()->getValor();
+                
+                string qualis = publicacao.get_veiculo().getQualis()->getValor();
                 pontos += qualisPontos.at(qualis);
             }
         }
 
         int quantidade = 0;
-        for (const auto& publicacao : docente->get_publicacoes()) {
-            int anoPublicacao = publicacao->get_ano();
+        for (Publicacao &publicacao : docente.get_publicacoes()) {
+            int anoPublicacao = publicacao.get_ano();
             if (anoRecredenciamento - anoPublicacao <= regra.getAnosPeriodicos() &&
                 anoPublicacao < anoRecredenciamento &&
-                publicacao->get_veiculo()->getTipo() == "P") {
-                string qualis = publicacao->get_veiculo()->getQualis()->getValor();
+                publicacao.get_veiculo()->getTipo() == "P") {
+                string qualis = publicacao.get_veiculo().getQualis()->getValor();
                 if (find(periodicosNecessarios.begin(), periodicosNecessarios.end(),
                          qualis) != periodicosNecessarios.end()) {
                     quantidade++;
@@ -95,21 +96,21 @@ void Reports::writeRecredenciamento(const string& diretorio, const vector<int>& 
             }
         }
 
-        auto dataIngresso = docente->get_data_ingresso();
+        vector<int> dataIngresso = docente.get_data_ingresso();
         int diaIngresso = dataIngresso[0];
         int mesIngresso = dataIngresso[1];
         int diffIngresso = anoRecredenciamento - dataIngresso[2];
 
-        auto dataNascimento = docente->get_data_nascimento();
+        auto dataNascimento = docente.get_data_nascimento();
         int diffNascimento = anoRecredenciamento - dataNascimento[2];
 
         string recredenciado = "Não";
 
-        if (docente->is_bolsista()) {
+        if (docente.is_bolsista()) {
             recredenciado = "Bolsista CNPq";
-        } else if (docente->is_coordenador()) {
+        } else if (docente.is_coordenador()) {
             recredenciado = "Coordenador";
-        } else if (docente->is_licenciado()) {
+        } else if (docente.is_licenciado()) {
             recredenciado = "Licença Maternidade";
         } else if (diffIngresso < 2 || (diffIngresso == 2 && mesIngresso == 1 && diaIngresso == 1)) {
             recredenciado = "PPJ";
@@ -119,12 +120,12 @@ void Reports::writeRecredenciamento(const string& diretorio, const vector<int>& 
             recredenciado = "Sim";
         }
 
-        arquivo << docente->get_nome() << ";" << fixed << setprecision(1) << pontos << ";"
+        arquivo << docente.get_nome() << ";" << fixed << setprecision(1) << pontos << ";"
                 << recredenciado << "\n";
     }
 }
 
-void Reports::writePublicacoes(const string& diretorio, const PPGI& ufes) {
+void Reports::writePublicacoes(const string& diretorio, PPGI& ufes) {
     ofstream arquivo(diretorio + PUBLICACOES);
 
     if (!arquivo.is_open()) {
@@ -136,39 +137,39 @@ void Reports::writePublicacoes(const string& diretorio, const PPGI& ufes) {
     auto publicacoes = ufes.get_publicacoes();
 
     // Ordenar publicações
-    sort(publicacoes.begin(), publicacoes.end(), [](const shared_ptr<Publicacao>& a, const shared_ptr<Publicacao>& b) {
-        if (a->get_veiculo()->getQualis()->getValor() != b->get_veiculo()->getQualis()->getValor()) {
-            return a->get_veiculo()->getQualis()->getValor() < b->get_veiculo()->getQualis()->getValor();
+    sort(publicacoes.begin(), publicacoes.end(), [](Publicacao & a, Publicacao & b) {
+        if (a.get_veiculo().getQualis()->getValor() != b.get_veiculo().getQualis()->getValor()) {
+            return a.get_veiculo().getQualis()->getValor() < b.get_veiculo().getQualis()->getValor();
         }
-        if (a->get_ano() != b->get_ano()) {
-            return a->get_ano() > b->get_ano();
+        if (a.get_ano() != b.get_ano()) {
+            return a.get_ano() > b.get_ano();
         }
-        if (a->get_veiculo()->getSigla() != b->get_veiculo()->getSigla()) {
-            return a->get_veiculo()->getSigla() < b->get_veiculo()->getSigla();
+        if (a.get_veiculo().getSigla() != b.get_veiculo().getSigla()) {
+            return a.get_veiculo().getSigla() < b.get_veiculo().getSigla();
         }
-        return a->get_titulo() < b->get_titulo();
+        return a.get_titulo() < b.get_titulo();
     });
 
-    for (const auto& publicacao : publicacoes) {
+    for (Publicacao & publicacao : publicacoes) {
         string autores;
-        for (const auto& autor : publicacao->get_autores()) {
-            autores += autor->get_nome() + ",";
+        for (Docente & autor : publicacao.get_autores()) {
+            autores += autor.get_nome() + ",";
         }
         if (!autores.empty()) {
             autores.pop_back(); // Remover última vírgula
         }
 
-        arquivo << publicacao->get_ano() << ";"
-                << publicacao->get_veiculo()->getSigla() << ";"
-                << publicacao->get_veiculo()->getNome() << ";"
-                << publicacao->get_veiculo()->getQualis()->getValor() << ";"
-                << fixed << setprecision(3) << publicacao->get_veiculo()->getImpacto() << ";"
-                << publicacao->get_titulo() << ";"
+        arquivo << publicacao.get_ano() << ";"
+                << publicacao.get_veiculo().getSigla() << ";"
+                << publicacao.get_veiculo().getNome() << ";"
+                << publicacao->get_veiculo().getQualis()->getValor() << ";"
+                << fixed << setprecision(3) << publicacao.get_veiculo().getImpacto() << ";"
+                << publicacao.get_titulo() << ";"
                 << autores << "\n";
     }
 }
 
-void Reports::writeEstatisticas(const string& diretorio, const PPGI& ufes) {
+void Reports::writeEstatisticas(const string& diretorio,PPGI& ufes) {
     ofstream arquivo(diretorio + ESTATISTICAS);
 
     if (!arquivo.is_open()) {
@@ -180,10 +181,10 @@ void Reports::writeEstatisticas(const string& diretorio, const PPGI& ufes) {
     unordered_map<string, int> qualisArtigos;
     unordered_map<string, double> qualisMediaDocentes;
 
-    for (const auto& publicacao : ufes.get_publicacoes()) {
-        string qualis = publicacao->get_veiculo()->getQualis()->getValor();
+    for (Publicacao & publicacao : ufes.get_publicacoes()) {
+        string qualis = publicacao.get_veiculo().getQualis()->getValor();
         qualisArtigos[qualis]++;
-        qualisMediaDocentes[qualis] += 1.0 / publicacao->get_autores().size();
+        qualisMediaDocentes[qualis] += 1.0 / publicacao.get_autores().size();
     }
 
     for (const auto& qualis : Qualis::VALORES) {

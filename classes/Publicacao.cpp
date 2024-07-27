@@ -4,6 +4,7 @@
 
 using namespace std;
 
+///pode dar erro por falta de construtor padrão
 Publicacao::Publicacao(int ano, string titulo, int numero, int volume, string local, int pagina_inicial, int pagina_final){
     this->ano = ano;
     this->titulo = titulo;
@@ -18,8 +19,9 @@ int Publicacao::get_ano(){
     return this->ano;
 }
 
-Veiculo Publicacao::get_veiculo() const {
+const Veiculo &Publicacao::get_veiculo() const {
     /// arranjar um jeito de passar o veículo por cópia
+    return this->veiculo;
 }
 
 string Publicacao::get_titulo(){

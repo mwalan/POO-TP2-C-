@@ -27,11 +27,12 @@ string Veiculo::getIssn() const {
     return this->issn;
 }
 
-Qualis* Veiculo::getQualis() const {
-    return qualis.get(); // Retorna um ponteiro cru para o Qualis
+const Qualis Veiculo::getQualis() const {
+    return this->qualis;
 }
 
-void Veiculo::setQualis(unique_ptr<Qualis> novoQualis) {
+void Veiculo::setQualis(Qualis &novoQualis) {
     // A transferência de posse é automática com unique_ptr
-    qualis = move(novoQualis); 
+    qualis = novoQualis;
 }
+

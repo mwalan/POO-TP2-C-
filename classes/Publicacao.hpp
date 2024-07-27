@@ -26,7 +26,7 @@ public:
     Publicacao(int ano, std::string titulo, int numero, int volume, 
                string local, int pagina_inicial, int pagina_final);
     int get_ano();
-    Veiculo get_veiculo() const; 
+    const Veiculo & get_veiculo() const; 
     string get_titulo();
     vector<Docente> get_autores();
     int get_numero();
