@@ -18,6 +18,9 @@ public:
 
     int getAno() const;
     string getValor() const;
+
+    // atribuir alguma coisa ao qualis
+    // Qualis operator! (Qualis _src);
 };
 
 #endif

@@ -2,26 +2,28 @@
 
 PPGI::PPGI() = default;
 
-vector<shared_ptr<Docente>>& PPGI::get_docentes(){
+vector<Docente>& PPGI::get_docentes(){
     return this->docentes;
 }
 
-vector<shared_ptr<Publicacao>>& PPGI::get_publicacoes(){
+vector<Publicacao>& PPGI::get_publicacoes(){
     return this->publicacoes;
 }
 
+// isso tá certo?
 Regra PPGI::get_regra() const { 
     return this->regra;
 }
 
-void PPGI::add_docente(shared_ptr<Docente> docente) {
+void PPGI::add_docente(Docente &docente) {
     this->docentes.push_back(docente);
 }
 
-void PPGI::add_publicacao(shared_ptr<Publicacao> &publicacao) {
+void PPGI::add_publicacao(Publicacao &publicacao) {
     this->publicacoes.push_back(publicacao);
 }
 
+// rever isso
 void PPGI::set_regra(const Regra& regra) { 
     this->regra = regra;
 }

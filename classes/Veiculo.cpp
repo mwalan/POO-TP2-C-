@@ -1,5 +1,9 @@
 #include "Veiculo.hpp"
 
+Veiculo Veiculo::operator = (Veiculo &_src){
+    return Veiculo(_src.sigla,_src.nome,_src.tipo,_src.impacto,_src.issn);
+}
+
 Veiculo::Veiculo(const string& sigla, const string& nome, const string& tipo, double impacto, const string& issn)
     : sigla(sigla), nome(nome), tipo(tipo), impacto(impacto), issn(issn), qualis(nullptr) {}
 
@@ -23,11 +27,12 @@ string Veiculo::getIssn() const {
     return this->issn;
 }
 
-Qualis* Veiculo::getQualis() const {
-    return qualis.get(); // Retorna um ponteiro cru para o Qualis
+const Qualis Veiculo::getQualis() const {
+    return this->qualis;
 }
 
-void Veiculo::setQualis(unique_ptr<Qualis> novoQualis) {
+void Veiculo::setQualis(Qualis &novoQualis) {
     // A transferência de posse é automática com unique_ptr
-    qualis = move(novoQualis); 
+    qualis = novoQualis;
 }
+

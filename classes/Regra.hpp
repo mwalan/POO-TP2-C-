@@ -37,6 +37,7 @@ public:
     int getAnosPeriodicos() const;
     double getPontosMinimos() const;
 
+    // falta implementar o operador '=' para a regra
     static bool dataValida(const vector<int>& inicio, const vector<int>& fim, const vector<int>& alvo);
     bool dataRepetida(const vector<int>& inicio, const vector<int>& fim) const;
     bool dataContida(const vector<int>& alvo) const;
