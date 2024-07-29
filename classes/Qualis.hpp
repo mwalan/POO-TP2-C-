@@ -14,6 +14,7 @@ private:
 public:
     static const vector<string> VALORES;
 
+    Qualis();
     Qualis(int ano, const string& valor);
 
     int getAno() const;

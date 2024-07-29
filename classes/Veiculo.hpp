@@ -18,7 +18,8 @@ private:
 
 public:
     Veiculo(const string& sigla, const string& nome, const string& tipo, double impacto, const string& issn);
-
+    Veiculo();
+    
     string getSigla() const;
     string getNome() const;
     string getTipo() const;

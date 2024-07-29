@@ -7,6 +7,8 @@
 
 using namespace std;
 
+
+
 class Regra {
 private:
     vector<int> inicio; // {ano, mes, dia}
@@ -19,6 +21,7 @@ private:
     double pontosMinimos;
 
 public:
+    Regra();
     Regra(const vector<int>& inicio,
           const vector<int>& fim,
           const unordered_map<string, double>& qualisPontos,

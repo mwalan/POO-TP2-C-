@@ -34,8 +34,8 @@ private:
     static void readDocentes(const string& diretorio, PPGI& ufes);
     static void readOcorrencias(const string& diretorio, const vector<int>& dataRecredenciamento, PPGI& ufes);
     static unordered_map<string,Veiculo> readVeiculos(const string& diretorio);
-    static void readQualis(const string& diretorio, const vector<int>& dataRecredenciamento, unordered_map<string, Veiculo>& veiculos);
-    static void readPublicacoes(const string& diretorio, const vector<int>& dataRecredenciamento, PPGI& ufes, unordered_map<string, Veiculo>& veiculos);
+    static void readQualis(const string& diretorio, const vector<int>& dataRecredenciamento, unordered_map<string, Veiculo> &veiculos);
+    static void readPublicacoes(const string& diretorio, const vector<int>& dataRecredenciamento, PPGI& ufes, unordered_map<string, Veiculo> &veiculos);
     static void readRegras(const string& diretorio, const vector<int>& dataRecredenciamento, PPGI& ufes);
 };
 

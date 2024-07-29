@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <memory> 
 
+
 using namespace std;
 namespace fs = filesystem;
 
@@ -75,10 +76,16 @@ void Readers::readDocentes(const string& diretorio, PPGI& ufes) {
             getline(ss, dataNascimentoStr, ';');
             getline(ss, dataIngressoStr, ';');
 
-            vector<int> dataNascimento = reader_data(dataNascimentoStr);
-            vector<int> dataIngresso = reader_data(dataIngressoStr);
+           vector<int> dataNascimento = reader_data(dataNascimentoStr);
+           vector<int> dataIngresso = reader_data(dataIngressoStr);
 
-            ufes.add_docente(Docente(codigo, nome, dataNascimento, dataIngresso)); 
+
+            // pode dar erro
+            Docente _tmp = Docente(codigo, nome, dataNascimento, dataIngresso);
+
+            // ufes.add_docente(Docente(codigo, nome, dataNascimento, dataIngresso)); 
+
+            ufes.add_docente(_tmp); 
         }
         arquivo.close();
     } else {
@@ -165,8 +172,9 @@ unordered_map<string,Veiculo> Readers::readVeiculos(const string& diretorio) {
     return veiculos;
 }
 
+// colocar um vector de veiculos
 void Readers::readQualis(const string& diretorio, const vector<int>& dataRecredenciamento,
-                       unordered_map<string, Veiculo>& veiculos) {
+                       unordered_map<string, Veiculo> &veiculos) {
     ifstream arquivo(diretorio + QUALIS);
     string linha;
 
@@ -194,7 +202,8 @@ void Readers::readQualis(const string& diretorio, const vector<int>& dataRecrede
             }
 
             if (veiculos.count(sigla) > 0) {
-                veiculos[sigla]->setQualis(make_unique<Qualis>(ano, qualificacao));
+                Qualis _tmpQualis(ano, qualificacao);
+                veiculos[sigla].setQualis(_tmpQualis);
             } else {
                 stringstream mensagem;
                 mensagem << "Sigla de veículo não definida usada na qualificação do ano \""
@@ -251,7 +260,7 @@ void Readers::readPublicacoes(const string& diretorio, const vector<int>& dataRe
                     if (docente.get_codigo() == autor) {
                         // **Correção:** Passa o shared_ptr por referência
                         docente.add_publicacao(publicacao); 
-                        publicacao.add_autor(docente);
+                        publicacao.add_autor(&docente);
                         autorEncontrado = true;
                         break;
                     }

@@ -1,6 +1,6 @@
 #include "Publicacao.hpp"
 #include "Veiculo.hpp"
-#include "Docente.hpp"
+//#include "Docente.hpp"
 
 using namespace std;
 
@@ -28,7 +28,7 @@ string Publicacao::get_titulo(){
     return this->titulo;
 }
 
-vector<Docente> Publicacao::get_autores(){
+vector<Docente*> Publicacao::get_autores(){
     return this->autores;
 }
 
@@ -56,6 +56,6 @@ void Publicacao::set_veiculo(Veiculo &novo_veiculo) {
     this->veiculo = novo_veiculo;
 }
 
-void Publicacao::add_autor(Docente &autor) {
+void Publicacao::add_autor(Docente *autor) {
     this->autores.push_back(autor);
 }

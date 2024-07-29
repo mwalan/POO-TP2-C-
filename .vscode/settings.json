@@ -2,6 +2,7 @@
     "files.associations": {
         "stdexcept": "cpp",
         "exception": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "unordered_map": "cpp"
     }
 }
