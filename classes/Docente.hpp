@@ -25,12 +25,12 @@ private:
 public:
     Docente(const string &codigo, const string &nome, const vector<int> &data_nascimento, const vector<int> &data_ingresso);
     string get_codigo();
-    string get_nome();
-    vector<int> get_data_nascimento();
-    vector<int> get_data_ingresso();
-    bool is_bolsista();
-    bool is_coordenador();
-    bool is_licenciado();
+    string get_nome() const;
+    vector<int> get_data_nascimento() const;
+    vector<int> get_data_ingresso() const;
+    bool is_bolsista() const;
+    bool is_coordenador() const;
+    bool is_licenciado() const;
     // Docente _retDoc(const string codigo,const  string nome, const vector<int> data_nascimento,const  vector<int> data_ingresso);
 
     /// corrigir o retorno por referência

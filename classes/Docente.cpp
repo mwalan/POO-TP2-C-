@@ -24,32 +24,32 @@ string Docente::get_codigo()
     return this->codigo;
 }
 
-string Docente::get_nome()
+string Docente::get_nome() const
 {
     return this->nome;
 }
 
-vector<int> Docente::get_data_nascimento()
+vector<int> Docente::get_data_nascimento() const
 {
     return this->data_nascimento;
 }
 
-vector<int> Docente::get_data_ingresso()
+vector<int> Docente::get_data_ingresso() const
 {
     return this->data_ingresso;
 }
 
-bool Docente::is_bolsista()
+bool Docente::is_bolsista() const
 {
     return this->bolsista;
 }
 
-bool Docente::is_coordenador()
+bool Docente::is_coordenador() const
 {
     return this->coordenador;
 }
 
-bool Docente::is_licenciado()
+bool Docente::is_licenciado() const
 {
     return this->licenciado;
 }

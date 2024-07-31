@@ -28,9 +28,9 @@ private:
 public:
     Publicacao(int ano, std::string titulo, int numero, int volume, 
                string local, int pagina_inicial, int pagina_final);
-    int get_ano();
+    int get_ano() const;
     const Veiculo &get_veiculo() const; 
-    string get_titulo();
+    string get_titulo() const;
     vector<Docente*> get_autores();
     int get_numero();
     int get_volume();
@@ -40,7 +40,7 @@ public:
 
     void set_veiculo(Veiculo &novo_veiculo);
     void add_autor(Docente *autor); 
-
+    Publicacao operator = (Publicacao &_source);
 };
 
 #endif 

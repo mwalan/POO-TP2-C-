@@ -15,7 +15,7 @@ Publicacao::Publicacao(int ano, string titulo, int numero, int volume, string lo
     this->pagina_final = pagina_final;
 }
 
-int Publicacao::get_ano(){
+int Publicacao::get_ano() const {
     return this->ano;
 }
 
@@ -24,7 +24,7 @@ const Veiculo &Publicacao::get_veiculo() const {
     return this->veiculo;
 }
 
-string Publicacao::get_titulo(){
+string Publicacao::get_titulo() const {
     return this->titulo;
 }
 
@@ -59,3 +59,10 @@ void Publicacao::set_veiculo(Veiculo &novo_veiculo) {
 void Publicacao::add_autor(Docente *autor) {
     this->autores.push_back(autor);
 }
+
+///Verificar essa sobrecarga de operador
+Publicacao Publicacao::operator=(Publicacao &_source){
+    return Publicacao(_source.ano,_source.titulo,_source.numero,_source.volume,_source.local,_source.pagina_inicial,_source.pagina_final);
+}
+
+
