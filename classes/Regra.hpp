@@ -7,6 +7,8 @@
 
 using namespace std;
 
+
+
 class Regra {
 private:
     vector<int> inicio; // {ano, mes, dia}
@@ -19,6 +21,7 @@ private:
     double pontosMinimos;
 
 public:
+    Regra();
     Regra(const vector<int>& inicio,
           const vector<int>& fim,
           const unordered_map<string, double>& qualisPontos,
@@ -37,6 +40,7 @@ public:
     int getAnosPeriodicos() const;
     double getPontosMinimos() const;
 
+    // falta implementar o operador '=' para a regra
     static bool dataValida(const vector<int>& inicio, const vector<int>& fim, const vector<int>& alvo);
     bool dataRepetida(const vector<int>& inicio, const vector<int>& fim) const;
     bool dataContida(const vector<int>& alvo) const;

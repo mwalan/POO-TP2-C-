@@ -1,5 +1,8 @@
 {
     "files.associations": {
-        "stdexcept": "cpp"
+        "stdexcept": "cpp",
+        "exception": "cpp",
+        "filesystem": "cpp",
+        "unordered_map": "cpp"
     }
 }

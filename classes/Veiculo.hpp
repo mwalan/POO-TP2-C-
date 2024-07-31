@@ -14,18 +14,20 @@ private:
     string tipo;
     double impacto;
     string issn;
-    unique_ptr<Qualis> qualis; 
+    Qualis qualis; 
 
 public:
     Veiculo(const string& sigla, const string& nome, const string& tipo, double impacto, const string& issn);
-
+    Veiculo();
+    
     string getSigla() const;
     string getNome() const;
     string getTipo() const;
     double getImpacto() const;
     string getIssn() const;
-    Qualis* getQualis() const;
-    void setQualis(unique_ptr<Qualis> qualis);
+    const Qualis getQualis() const;
+    void setQualis(Qualis &novoQualis);
+    Veiculo operator = (Veiculo &_src);
 };
 
 #endif

@@ -14,10 +14,14 @@ private:
 public:
     static const vector<string> VALORES;
 
+    Qualis();
     Qualis(int ano, const string& valor);
 
     int getAno() const;
     string getValor() const;
+
+    // atribuir alguma coisa ao qualis
+    // Qualis operator! (Qualis _src);
 };
 
 #endif

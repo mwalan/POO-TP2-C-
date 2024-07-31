@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <memory> 
 
+
 using namespace std;
 namespace fs = filesystem;
 
@@ -75,10 +76,16 @@ void Readers::readDocentes(const string& diretorio, PPGI& ufes) {
             getline(ss, dataNascimentoStr, ';');
             getline(ss, dataIngressoStr, ';');
 
-            vector<int> dataNascimento = reader_data(dataNascimentoStr);
-            vector<int> dataIngresso = reader_data(dataIngressoStr);
+           vector<int> dataNascimento = reader_data(dataNascimentoStr);
+           vector<int> dataIngresso = reader_data(dataIngressoStr);
 
-            ufes.add_docente(make_shared<Docente>(codigo, nome, dataNascimento, dataIngresso)); 
+
+            // pode dar erro
+            Docente _tmp = Docente(codigo, nome, dataNascimento, dataIngresso);
+
+            // ufes.add_docente(Docente(codigo, nome, dataNascimento, dataIngresso)); 
+
+            ufes.add_docente(_tmp); 
         }
         arquivo.close();
     } else {
@@ -106,18 +113,18 @@ void Readers::readOcorrencias(const string& diretorio, const vector<int>& dataRe
 
             // **Correção:** Utiliza get_docentes() que retorna uma referência
             for (auto& docente : ufes.get_docentes()) { 
-                if (docente->get_codigo() == codigo) {
+                if (docente.get_codigo() == codigo) {
                     if (!Regra::dataValida(inicio, fim, dataRecredenciamento) &&
                         !(evento == "Licença Maternidade" && fim[2] == dataRecredenciamento[2] - 1)) {
                         continue;
                     }
 
                     if (evento == "Bolsista CNPq") {
-                        docente->set_bolsista(true);
+                        docente.set_bolsista(true);
                     } else if (evento == "Coordenador") {
-                        docente->set_coordenador(true);
+                        docente.set_coordenador(true);
                     } else if (evento == "Licença Maternidade") {
-                        docente->set_licenciado(true);
+                        docente.set_licenciado(true);
                     }
                     break; // Para o loop se o docente for encontrado
                 }
@@ -129,8 +136,8 @@ void Readers::readOcorrencias(const string& diretorio, const vector<int>& dataRe
     }
 }
 
-unordered_map<string, shared_ptr<Veiculo>> Readers::readVeiculos(const string& diretorio) {
-    unordered_map<string, shared_ptr<Veiculo>> veiculos;
+unordered_map<string,Veiculo> Readers::readVeiculos(const string& diretorio) {
+    unordered_map<string, Veiculo> veiculos;
     ifstream arquivo(diretorio + VEICULOS);
     string linha;
 
@@ -153,8 +160,10 @@ unordered_map<string, shared_ptr<Veiculo>> Readers::readVeiculos(const string& d
                 mensagem << "Tipo de veículo desconhecido para veículo " << sigla << ": " << tipo << ".";
                 throw invalid_argument(mensagem.str());
             }
-
-            veiculos[sigla] = make_shared<Veiculo>(sigla, nome, tipo, impacto, issn);
+            
+            //sobrecarregar um operador de cópia
+            Veiculo _tmp = Veiculo(sigla, nome, tipo, impacto, issn);
+            veiculos[sigla] = _tmp;
         }
         arquivo.close();
     } else {
@@ -163,8 +172,9 @@ unordered_map<string, shared_ptr<Veiculo>> Readers::readVeiculos(const string& d
     return veiculos;
 }
 
+// colocar um vector de veiculos
 void Readers::readQualis(const string& diretorio, const vector<int>& dataRecredenciamento,
-                       unordered_map<string, shared_ptr<Veiculo>>& veiculos) {
+                       unordered_map<string, Veiculo> &veiculos) {
     ifstream arquivo(diretorio + QUALIS);
     string linha;
 
@@ -192,7 +202,8 @@ void Readers::readQualis(const string& diretorio, const vector<int>& dataRecrede
             }
 
             if (veiculos.count(sigla) > 0) {
-                veiculos[sigla]->setQualis(make_unique<Qualis>(ano, qualificacao));
+                Qualis _tmpQualis(ano, qualificacao);
+                veiculos[sigla].setQualis(_tmpQualis);
             } else {
                 stringstream mensagem;
                 mensagem << "Sigla de veículo não definida usada na qualificação do ano \""
@@ -207,7 +218,7 @@ void Readers::readQualis(const string& diretorio, const vector<int>& dataRecrede
 }
 
 void Readers::readPublicacoes(const string& diretorio, const vector<int>& dataRecredenciamento,
-                             PPGI& ufes, unordered_map<string, shared_ptr<Veiculo>>& veiculos) {
+                             PPGI& ufes, unordered_map<string, Veiculo>& veiculos) {
     ifstream arquivo(diretorio + PUBLICACOES);
     string linha;
 
@@ -234,7 +245,7 @@ void Readers::readPublicacoes(const string& diretorio, const vector<int>& dataRe
             int paginaFinal = paginaFinalStr.empty() ? 0 : stoi(paginaFinalStr);
 
             // **Correção:** Utiliza make_shared para criar o shared_ptr
-            shared_ptr<Publicacao> publicacao = make_shared<Publicacao>(ano, titulo, numero, volume, local, paginaInicial, paginaFinal);
+            Publicacao publicacao = Publicacao(ano, titulo, numero, volume, local, paginaInicial, paginaFinal);
 
             stringstream autoresStream(autoresStr);
             string autor;
@@ -246,10 +257,10 @@ void Readers::readPublicacoes(const string& diretorio, const vector<int>& dataRe
 
                 // **Correção:** Utiliza get_docentes() que retorna uma referência
                 for (auto& docente : ufes.get_docentes()) {
-                    if (docente->get_codigo() == autor) {
+                    if (docente.get_codigo() == autor) {
                         // **Correção:** Passa o shared_ptr por referência
-                        docente->add_publicacao(publicacao); 
-                        publicacao->add_autor(docente);
+                        docente.add_publicacao(publicacao); 
+                        publicacao.add_autor(&docente);
                         autorEncontrado = true;
                         break;
                     }
@@ -264,7 +275,7 @@ void Readers::readPublicacoes(const string& diretorio, const vector<int>& dataRe
             }
 
             if (veiculos.count(veiculo) > 0) {
-                publicacao->set_veiculo(veiculos[veiculo]);
+                publicacao.set_veiculo(veiculos[veiculo]);
             } else {
                 stringstream mensagem;
                 mensagem << "Sigla de veículo não definida usada na publicação \""

@@ -13,18 +13,18 @@ using namespace std;
 
 class PPGI {
 private:
-    vector<shared_ptr<Docente>> docentes;
-    vector<shared_ptr<Publicacao>> publicacoes;
+    vector<Docente> docentes;
+    vector<Publicacao> publicacoes;
     Regra regra; 
 
 public:
     PPGI();
-    vector<shared_ptr<Docente>>& get_docentes();
-    vector<shared_ptr<Publicacao>>& get_publicacoes();
+    vector<Docente>& get_docentes();
+    vector<Publicacao>& get_publicacoes();
     Regra get_regra() const; 
 
-    void add_docente(shared_ptr<Docente> docente); 
-    void add_publicacao(shared_ptr<Publicacao>& publicacao);
+    void add_docente(Docente &docente); 
+    void add_publicacao(Publicacao & publicacao);
     void set_regra(const Regra& regra); 
 };
 

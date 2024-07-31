@@ -1,5 +1,7 @@
 #include "Qualis.hpp"
 
+Qualis::Qualis() = default;
+
 const vector<string> Qualis::VALORES = {
     "A1", "A2", "A3", "A4", "B1", "B2", "B3", "B4", "B5", "C"
 };
