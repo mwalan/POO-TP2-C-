@@ -1,59 +1,110 @@
 #include "Publicacao.hpp"
-#include "Veiculo.hpp"
-#include "Docente.hpp"
+#include <iostream>
 
-using namespace std;
+// Construtor
+Publicacao::Publicacao(int ano, shared_ptr<Veiculo>& veiculo, const string& titulo, const vector<string>& autores, int numero, 
+                       int volume, const string& local, int pageStart, int pageEnd) :
+    ano(ano), veiculo(*veiculo), titulo(titulo), autores(autores), numero(numero), volume(volume), 
+    local(local), pageStart(pageStart), pageEnd(pageEnd) {}
 
-Publicacao::Publicacao(int ano, string titulo, int numero, int volume, string local, int pagina_inicial, int pagina_final){
+// Getters
+int Publicacao::getAno() const { 
+    return ano; 
+}
+
+Veiculo Publicacao::getVeiculo() const { 
+    return veiculo; 
+}
+
+string Publicacao::getTitulo() const { 
+    return titulo; 
+}
+
+vector<string> Publicacao::getAutores() const { 
+    return autores; 
+}
+
+int Publicacao::getNumero() const { 
+    return numero; 
+}
+
+int Publicacao::getVolume() const { 
+    return volume; 
+}
+
+string Publicacao::getLocal() const { 
+    return local; 
+}
+
+int Publicacao::getPageStart() const { 
+    return pageStart; 
+}
+
+int Publicacao::getPageEnd() const { 
+    return pageEnd; 
+}
+
+// Setters
+void Publicacao::setAno(int ano) { 
     this->ano = ano;
+}
+
+void Publicacao::setVeiculo(const Veiculo& veiculo) {
+    this->veiculo = veiculo;
+}
+
+void Publicacao::setTitulo(const string& titulo) {
     this->titulo = titulo;
+}
+
+void Publicacao::setAutores(const vector<string>& autores) { 
+    this->autores = autores; 
+}
+
+void Publicacao::setNumero(int numero) {
     this->numero = numero;
-    this->volume = volume;
-    this->local = local;
-    this->pagina_inicial = pagina_inicial;
-    this->pagina_final = pagina_final;
 }
 
-int Publicacao::get_ano(){
-    return this->ano;
+void Publicacao::setVolume(int volume) { 
+    this->volume = volume; 
 }
 
-shared_ptr<Veiculo> Publicacao::get_veiculo() const {
-    return this->veiculo; 
+void Publicacao::setLocal(const string& local) { 
+    this->local = local; 
 }
 
-string Publicacao::get_titulo(){
-    return this->titulo;
+void Publicacao::setPageStart(int pageStart) { 
+    this->pageStart = pageStart; 
 }
 
-vector<shared_ptr<Docente>> Publicacao::get_autores(){
-    return this->autores;
+void Publicacao::setPageEnd(int pageEnd) { 
+    this->pageEnd = pageEnd; 
 }
 
-int Publicacao::get_numero(){
-    return this->numero;
-}
+void Publicacao::imprime(){
+    int ano = getAno();
+    Veiculo veiculo = getVeiculo();
+    string titulo = getTitulo();
+    vector<string> autores = getAutores();
+    int numero = getNumero();
+    int volume = getVolume();
+    string local = getLocal();
+    int pageStart = getPageStart();
+    int pageEnd = getPageEnd();
 
-int Publicacao::get_volume(){
-    return this->volume;
-}
+    cout << "IMPRIMINDO PUBLICACAO" << endl;
+    cout << "ano: " << ano << endl;
+    cout << "veiculo: " << endl;
+    veiculo.printVeiculo();
+    cout << "Titulo: " << titulo << endl;
+    for (int i = 0; i < autores.size(); ++i) {
+    printf("autor[%d]: %s\n", i, autores[i].c_str());
+    }
+    cout << "numero: " << numero << endl;
+    cout << "volume: " << volume << endl;
+    cout << "local: " << local << endl;
+    cout << "pageStart: " << pageStart << endl;
+    cout << "pageEnd: " << pageEnd << endl;
+    cout << "--------------------------------------------------------" << endl;
 
-string Publicacao::get_local(){
-    return this->local;
-}
-
-int Publicacao::get_pagina_inicial(){
-    return this->pagina_inicial;
-}
-
-int Publicacao::get_pagina_final(){
-    return this->pagina_final;
-}
-
-void Publicacao::set_veiculo(shared_ptr<Veiculo> novo_veiculo) {
-    this->veiculo = novo_veiculo;
-}
-
-void Publicacao::add_autor(shared_ptr<Docente> autor) {
-    this->autores.push_back(autor);
 }
