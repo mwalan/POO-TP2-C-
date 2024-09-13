@@ -2,22 +2,23 @@
 #define QUALIS_HPP
 
 #include <string>
-#include <vector>
-
-using namespace std;
 
 class Qualis {
 private:
     int ano;
-    string valor;
+    std::string valor;
 
 public:
-    static const vector<string> VALORES;
+    // Construtor
+    Qualis(int ano = 0, const std::string& valor = ""); 
 
-    Qualis(int ano, const string& valor);
-
+    // Getters
     int getAno() const;
-    string getValor() const;
+    std::string getValor() const;
+
+    // Setters
+    void setAno(int ano);
+    void setValor(const std::string& valor);
 };
 
-#endif
+#endif 
