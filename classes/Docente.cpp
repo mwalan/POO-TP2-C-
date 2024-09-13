@@ -1,61 +1,91 @@
 #include "Docente.hpp"
-#include "Readers.hpp"
+#include <iostream>
 
-using namespace std;
+// Construtor
+Docente::Docente(const string& nome, const string& codigo, const vector<int>& dataNascimento, const vector<int>& dataIngresso)
+    : nome(nome), codigo(codigo), data_nascimento(dataNascimento), data_ingresso(dataIngresso),
+      bolsista(false), coordenador(false), licenciado(false), pontuacao(0.0f) {}
 
-Docente::Docente(string codigo, string nome, string data_nascimento, string data_ingresso){
-    this->codigo = codigo;
-    this->nome = nome;
-    Readers reader;
-    this->data_nascimento = reader.reader_data(data_nascimento);
-    this->data_ingresso = reader.reader_data(data_ingresso);
-    this->coordenador = false;
-    this->licenciado = false;
+Docente::Docente() : 
+    codigo(""), 
+    nome(""), 
+    data_nascimento({0, 0, 0}), 
+    data_ingresso({0, 0, 0}),    
+    bolsista(false), 
+    coordenador(false), 
+    licenciado(false), 
+    pontuacao(0.0f){}
+
+// Getters
+string Docente::getCodigo() const {
+    return codigo;
 }
 
-string Docente::get_codigo(){
-    return this->codigo;
+string Docente::getNome() const {
+    return nome;
 }
 
-string Docente::get_nome(){
-    return this->nome;
+vector<int> Docente::getDataNascimento() const {
+    return data_nascimento;
 }
 
-vector<int> Docente::get_data_nascimento(){
-    return this->data_nascimento;
+vector<int> Docente::getDataIngresso() const {
+    return data_ingresso;
 }
 
-vector<int> Docente::get_data_ingresso(){
-    return this->data_ingresso;
+bool Docente::isBolsista() const {
+    return bolsista;
 }
 
-bool Docente::is_bolsista(){
-    return this->bolsista;
+bool Docente::isCoordenador() const {
+    return coordenador;
 }
 
-bool Docente::is_coordenador(){
-    return this->coordenador;
+bool Docente::isLicenciado() const {
+    return licenciado;
 }
 
-bool Docente::is_licenciado(){
-    return this->licenciado;
+float Docente::getPontuacao() const {
+    return pontuacao;
 }
 
-void Docente::set_bolsista(bool status){
-    this->bolsista = status;
+// Setters
+void Docente::setBolsista(bool bolsista) {
+    this->bolsista = bolsista;
 }
 
-void Docente::set_coordenador(bool status){
-    this->coordenador = status;
+void Docente::setCoordenador(bool coordenador) {
+    this->coordenador = coordenador;
 }
 
-void Docente::set_licenciado(bool status){
-    this->licenciado = status;
+void Docente::setLicenciado(bool licenciado) {
+    this->licenciado = licenciado;
 }
 
-void Docente::add_publicacao(shared_ptr<Publicacao>& publicacao) {
-    this->publicacoes.push_back(publicacao);
+void Docente::setPontuacao(float pontuacao) {
+    this->pontuacao = pontuacao;
 }
 
+void Docente::addPontuacao(float pontos) {
+    this->pontuacao += pontos;
+}
 
+void Docente::imprime(){
+    auto codigo = getCodigo();
+    auto nome = getNome();
+    auto dataNasc = getDataNascimento();
+    auto dataIngresso = getDataIngresso();
+    auto bolsista = isBolsista();
+    auto coordenador = isCoordenador();
+    auto licenciado = isLicenciado();
+    auto pontuacao = getPontuacao();
 
+    cout << codigo << endl;
+    cout << nome << endl;
+    cout << dataNasc[0] << "/" << dataNasc[1] << "/" << dataNasc[2] << endl;
+    cout << dataIngresso[0] << "/" << dataIngresso[1] << "/" << dataIngresso[2] << endl;
+    cout << bolsista << endl;
+    cout << coordenador << endl;
+    cout << licenciado << endl;
+    cout << pontuacao << endl;
+}
