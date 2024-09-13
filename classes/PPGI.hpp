@@ -1,31 +1,29 @@
-#ifndef PPGI_HPP 
+#ifndef PPGI_HPP
 #define PPGI_HPP
 
-#include <iostream>
 #include <vector>
-#include <memory> // Para std::shared_ptr
-
 #include "Docente.hpp"
 #include "Publicacao.hpp"
 #include "Regra.hpp"
 
-using namespace std;
-
 class PPGI {
 private:
-    vector<shared_ptr<Docente>> docentes;
-    vector<shared_ptr<Publicacao>> publicacoes;
-    Regra regra; 
+    std::vector<Docente> docentes; 
+    std::vector<Publicacao> publicacoes;
+    std::vector<Regra> regras;
 
 public:
-    PPGI();
-    vector<shared_ptr<Docente>>& get_docentes();
-    vector<shared_ptr<Publicacao>>& get_publicacoes();
-    Regra get_regra() const; 
-
-    void add_docente(shared_ptr<Docente> docente); 
-    void add_publicacao(shared_ptr<Publicacao>& publicacao);
-    void set_regra(const Regra& regra); 
+    // Métodos
+    void addDocente(const Docente& docente); 
+    const std::vector<Docente>& getDocentes() const; 
+    void imprimirDocentes() const;
+    Docente* getDocentePorCodigo(const string& codigo);
+    void addPublicacao(const Publicacao& publicacao); 
+    const std::vector<Publicacao>& getPublicacoes() const;
+    void imprimirPublicacoes();
+    void addRegra(const Regra& regra);
+    const std::vector<Regra>& getRegras() const;
+    void imprimirRegras();
 };
 
 #endif
