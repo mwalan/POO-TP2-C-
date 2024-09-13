@@ -1,16 +1,12 @@
 #ifndef DOCENTE_HPP
 #define DOCENTE_HPP
 
-#include <iostream>
+#include <string>
 #include <vector>
-#include <memory> // Para std::shared_ptr
-
-#include "Publicacao.hpp"
 
 using namespace std;
 
-
-class Docente{
+class Docente {
 private:
     string codigo;
     string nome;
@@ -19,30 +15,32 @@ private:
     bool bolsista;
     bool coordenador;
     bool licenciado;
-    vector<shared_ptr<Publicacao>> publicacoes;  
+    float pontuacao;
 
 public:
-    Docente(string codigo, string nome, string data_nascimento, string data_ingresso);
-    string get_codigo();
-    string get_nome();
-    vector <int> get_data_nascimento();
-    vector <int> get_data_ingresso();
-    bool is_bolsista();
-    bool is_coordenador();
-    bool is_licenciado();
-    
-    ///corrigir o retorno por referência
-    vector<shared_ptr<Publicacao>> get_publicacoes();
-    
-    void set_bolsista(bool status);
-    void set_coordenador(bool status);
-    void set_licenciado(bool status);
-    void add_publicacao(shared_ptr<Publicacao>& publicacao);
+    // Construtor
+    Docente(const string& nome, const string& codigo, const vector<int>& dataNascimento, const vector<int>& dataIngresso);
+    Docente();
+
+    // Getters
+    string getCodigo() const;
+    string getNome() const;
+    vector<int> getDataNascimento() const;
+    vector<int> getDataIngresso() const;
+    bool isBolsista() const;
+    bool isCoordenador() const;
+    bool isLicenciado() const;
+    float getPontuacao() const;
+
+    // Setters
+    void setBolsista(bool bolsista);
+    void setCoordenador(bool coordenador);
+    void setLicenciado(bool licenciado);
+    void setPontuacao(float pontuacao);
+    void addPontuacao(float pontos); 
+
+    //teste
+    void imprime();
 };
 
-vector<shared_ptr<Publicacao>> Docente::get_publicacoes() {
-    return this->publicacoes;
-    /// aqui não retorna por cópia
-}
-
-#endif
+#endif 
