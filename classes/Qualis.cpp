@@ -1,15 +1,22 @@
 #include "Qualis.hpp"
 
-const vector<string> Qualis::VALORES = {
-    "A1", "A2", "A3", "A4", "B1", "B2", "B3", "B4", "B5", "C"
-};
+// Construtor
+Qualis::Qualis(int ano, const std::string& valor) : ano(ano), valor(valor) {}
 
-Qualis::Qualis(int ano, const string& valor) : ano(ano), valor(valor) {}
-
+// Getters
 int Qualis::getAno() const {
     return ano;
 }
 
 std::string Qualis::getValor() const {
     return valor;
+}
+
+// Setters
+void Qualis::setAno(int ano) {
+    this->ano = ano;
+}
+
+void Qualis::setValor(const std::string& valor) {
+    this->valor = valor;
 }
