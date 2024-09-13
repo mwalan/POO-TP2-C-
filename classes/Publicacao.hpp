@@ -1,43 +1,53 @@
 #ifndef PUBLICACAO_HPP
 #define PUBLICACAO_HPP
 
-#include <iostream>
+#include <string>
 #include <vector>
+#include "Veiculo.hpp" // Certifique-se de que o arquivo de cabeçalho Veiculo.hpp existe
 #include <memory>
-
-#include "Docente.hpp"
-#include "Veiculo.hpp"
 
 using namespace std;
 
 class Publicacao {
 private:
     int ano;
-    shared_ptr<Veiculo> veiculo; 
+    Veiculo veiculo;
     string titulo;
+    vector<string> autores;
     int numero;
     int volume;
     string local;
-    int pagina_inicial;
-    int pagina_final;
-    vector<shared_ptr<Docente>> autores;
+    int pageStart;
+    int pageEnd;
 
 public:
-    Publicacao(int ano, std::string titulo, int numero, int volume, 
-               string local, int pagina_inicial, int pagina_final);
-    int get_ano();
-    shared_ptr<Veiculo> get_veiculo() const; 
-    string get_titulo();
-    vector<shared_ptr<Docente>> get_autores();
-    int get_numero();
-    int get_volume();
-    string get_local();
-    int get_pagina_inicial();
-    int get_pagina_final();
+    // Construtor
+    Publicacao(int ano, shared_ptr<Veiculo>& veiculo, const string& titulo, const vector<string>& autores, int numero, int volume, 
+               const string& local, int pageStart, int pageEnd);
 
-    void set_veiculo(shared_ptr<Veiculo> novo_veiculo);
-    void add_autor(shared_ptr<Docente> autor); 
+    // Getters
+    int getAno() const;
+    Veiculo getVeiculo() const;
+    string getTitulo() const;
+    vector<string> getAutores() const;
+    int getNumero() const;
+    int getVolume() const;
+    string getLocal() const;
+    int getPageStart() const;
+    int getPageEnd() const;
 
+    // Setters
+    void setAno(int ano);
+    void setVeiculo(const Veiculo& veiculo);
+    void setTitulo(const string& titulo);
+    void setAutores(const vector<string>& autores);
+    void setNumero(int numero);
+    void setVolume(int volume);
+    void setLocal(const string& local);
+    void setPageStart(int pageStart);
+    void setPageEnd(int pageEnd);
+
+    void imprime();
 };
 
-#endif 
+#endif
