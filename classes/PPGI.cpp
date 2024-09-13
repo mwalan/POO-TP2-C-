@@ -1,27 +1,78 @@
+#include <iostream>
 #include "PPGI.hpp"
+#include <algorithm> // Para std::find_if
 
-PPGI::PPGI() = default;
-
-vector<shared_ptr<Docente>>& PPGI::get_docentes(){
-    return this->docentes;
+// Adiciona um docente à lista de docentes.
+void PPGI::addDocente(const Docente& docente) {
+    docentes.push_back(docente);
 }
 
-vector<shared_ptr<Publicacao>>& PPGI::get_publicacoes(){
-    return this->publicacoes;
+// Retorna uma referência constante para a lista de docentes.
+const std::vector<Docente>& PPGI::getDocentes() const {
+    return docentes;
 }
 
-Regra PPGI::get_regra() const { 
-    return this->regra;
+void PPGI::imprimirDocentes() const {
+    if (docentes.empty()) {
+        std::cout << "Não há docentes cadastrados no PPGI." << std::endl;
+        return;
+    }
+
+    for (const Docente& docente : docentes) {
+        std::cout << "Nome: " << docente.getNome() << std::endl;
+        std::cout << "Código: " << docente.getCodigo() << std::endl;
+
+        // Imprimindo data de nascimento:
+        const vector<int>& dataNasc = docente.getDataNascimento();
+        std::cout << "Data de Nascimento: " << dataNasc[0] << "/" << dataNasc[1] << "/" << dataNasc[2] << std::endl;
+
+        // Imprimindo data de ingresso (similar à data de nascimento):
+        const vector<int>& dataIngresso = docente.getDataIngresso();
+        std::cout << "Data de Ingresso: " << dataIngresso[0] << "/" << dataIngresso[1] << "/" << dataIngresso[2] << std::endl;
+
+        std::cout << "Bolsista: " << (docente.isBolsista() ? "Sim" : "Não") << std::endl;
+        std::cout << "Coordenador: " << (docente.isCoordenador() ? "Sim" : "Não") << std::endl;
+        std::cout << "Licenciado: " << (docente.isLicenciado() ? "Sim" : "Não") << std::endl;
+        std::cout << "Pontuação: " << docente.getPontuacao() << std::endl;
+        std::cout << "--------------------" << std::endl;
+    }
 }
 
-void PPGI::add_docente(shared_ptr<Docente> docente) {
-    this->docentes.push_back(docente);
+Docente* PPGI::getDocentePorCodigo(const string& codigo) {
+    for(auto& docente : docentes){
+        //cout << "procurando" << endl;
+        if(docente.getCodigo() == codigo){
+            //cout << "pegou" << endl;
+            return &docente;
+        }
+    }
+    return nullptr;
 }
 
-void PPGI::add_publicacao(shared_ptr<Publicacao> &publicacao) {
-    this->publicacoes.push_back(publicacao);
+void PPGI::addPublicacao(const Publicacao& publicacao) {
+    publicacoes.push_back(publicacao);
 }
 
-void PPGI::set_regra(const Regra& regra) { 
-    this->regra = regra;
+const std::vector<Publicacao>& PPGI::getPublicacoes() const {
+    return publicacoes;
+}
+
+void PPGI::imprimirPublicacoes(){
+    for(Publicacao& p : publicacoes){
+        p.imprime();
+    }
+}
+
+void PPGI::addRegra(const Regra& regra) {
+    regras.push_back(regra);
+}
+
+const std::vector<Regra>& PPGI::getRegras() const {
+    return regras;
+}
+
+void PPGI::imprimirRegras(){
+    for(Regra& r : regras){
+        r.imprimirRegra();
+    }
 }
