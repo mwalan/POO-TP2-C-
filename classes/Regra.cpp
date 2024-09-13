@@ -1,72 +1,56 @@
 #include "Regra.hpp"
+#include <iostream>
 
-Regra::Regra(const vector<int>& inicio,
-           const vector<int>& fim,
-           const unordered_map<string, double>& qualisPontos,
-           int anosPontos,
-           const vector<string>& periodicosNecessarios,
-           int quantidadePeriodicosNecessarios,
-           int anosPeriodicos,
-           double pontosMinimos)
-        :  inicio(inicio),
-           fim(fim),
-           qualisPontos(qualisPontos),
-           anosPontos(anosPontos),
-           periodicosNecessarios(periodicosNecessarios),
-           quantidadePeriodicosNecessarios(quantidadePeriodicosNecessarios),
-           anosPeriodicos(anosPeriodicos),
-           pontosMinimos(pontosMinimos) {}
+// Construtor
+Regra::Regra(const vector<int>& dataInicio, const vector<int>& dataFim, const vector<string>& qualis,
+             const vector<int>& pontosQualis, int anosPontos, const vector<string>& qualis2,
+             const vector<int>& qualis2QtdMinimas, int anosArtigos, int minimoPontos) :
+    dataInicio(dataInicio), dataFim(dataFim), qualis(qualis), pontosQualis(pontosQualis),
+    anosPontos(anosPontos), qualis2(qualis2), qualis2QtdMinimas(qualis2QtdMinimas), 
+    anosArtigos(anosArtigos), minimoPontos(minimoPontos) {}
 
-vector<int> Regra::getInicio() const {
-    return this->inicio;
-}
+// Getters
+vector<int> Regra::getDataInicio() const { return dataInicio; }
+vector<int> Regra::getDataFim() const { return dataFim; }
+vector<string> Regra::getQualis() const { return qualis; }
+vector<int> Regra::getPontosQualis() const { return pontosQualis; }
+int Regra::getAnosPontos() const { return anosPontos; }
+vector<string> Regra::getQualis2() const { return qualis2; }
+vector<int> Regra::getQualis2QtdMinimas() const { return qualis2QtdMinimas; }
+int Regra::getAnosArtigos() const { return anosArtigos; }
+int Regra::getMinimoPontos() const { return minimoPontos; }
 
-vector<int> Regra::getFim() const {
-    return this->fim;
-}
+void Regra::imprimirRegra() const {
+    cout << "Data Início: " << dataInicio[0] << "/" << dataInicio[1] << "/" << dataInicio[2] << endl;
+    cout << "Data Fim: " << dataFim[0] << "/" << dataFim[1] << "/" << dataFim[2] << endl;
 
-unordered_map<string, double> Regra::getQualisPontos() const {
-    return this->qualisPontos;
-}
+    cout << "Qualis: ";
+    for (const auto& q : qualis) {
+        cout << q << " ";
+    }
+    cout << endl;
 
-int Regra::getAnosPontos() const {
-    return this->anosPontos;
-}
+    cout << "Pontos Qualis: ";
+    for (const auto& p : pontosQualis) {
+        cout << p << " ";
+    }
+    cout << endl;
 
-vector<string> Regra::getPeriodicosNecessarios() const {
-    return this->periodicosNecessarios;
-}
+    cout << "Anos Pontos: " << anosPontos << endl;
 
-int Regra::getQuantidadePeriodicosNecessarios() const {
-    return this->quantidadePeriodicosNecessarios;
-}
+    cout << "Qualis 2: ";
+    for (const auto& q2 : qualis2) {
+        cout << q2 << " ";
+    }
+    cout << endl;
 
-int Regra::getAnosPeriodicos() const {
-    return this->anosPeriodicos;
-}
+    cout << "Qualis 2 Qtd Mínimas: ";
+    for (const auto& qtd : qualis2QtdMinimas) {
+        cout << qtd << " ";
+    }
+    cout << endl;
 
-double Regra::getPontosMinimos() const {
-    return this->pontosMinimos;
-}
-
-// Função auxiliar para comparar datas no formato dia/mes/ano
-bool compararDatas(const vector<int>& data1, const vector<int>& data2) {
-    if (data1[2] != data2[2]) return data1[2] < data2[2]; // Compara anos
-    if (data1[1] != data2[1]) return data1[1] < data2[1]; // Compara meses
-    return data1[0] < data2[0]; // Compara dias
-}
-
-// verifica se a data alvo está dentro do intervalo fechado de inicio e fim
-bool Regra::dataValida(const vector<int>& inicio, const vector<int>& fim, const vector<int>& alvo) {
-    return !compararDatas(alvo, inicio) && !compararDatas(fim, alvo); 
-}
-
-// verifica se a data alvo cobre o mesmo intervalo que a data argumento
-bool Regra::dataRepetida(const vector<int>& inicio, const vector<int>& fim) const {
-    return !compararDatas(inicio, this->inicio) && !compararDatas(this->fim, fim);
-}
-
-// verifica se um dia específico está contido no intervalo de tempo
-bool Regra::dataContida(const vector<int>& alvo) const {
-    return !compararDatas(alvo, this->inicio) && !compararDatas(this->fim, alvo); 
+    cout << "Anos Artigos: " << anosArtigos << endl;
+    cout << "Mínimo Pontos: " << minimoPontos << endl;
+    cout << "--------------------" << endl; // Separador visual
 }
