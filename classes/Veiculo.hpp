@@ -2,7 +2,6 @@
 #define VEICULO_HPP
 
 #include <string>
-#include <memory> // Para std::unique_ptr
 #include "Qualis.hpp"
 
 using namespace std;
@@ -14,18 +13,26 @@ private:
     string tipo;
     double impacto;
     string issn;
-    unique_ptr<Qualis> qualis; 
+    Qualis qualis;
 
 public:
-    Veiculo(const string& sigla, const string& nome, const string& tipo, double impacto, const string& issn);
+    // Construtor
+    Veiculo(const string& sigla = "", const string& nome = "", 
+            const string& tipo = "", double impacto = 0.0, const string& issn = "");
+    
 
+    // Getters
     string getSigla() const;
     string getNome() const;
     string getTipo() const;
     double getImpacto() const;
-    string getIssn() const;
-    Qualis* getQualis() const;
-    void setQualis(unique_ptr<Qualis> qualis);
+    string getISSN() const;
+    Qualis getQualis() const;
+
+    //Setters
+    void setQualis(const Qualis& qualis);
+
+    void printVeiculo();
 };
 
-#endif
+#endif // VEICULO_HPP
