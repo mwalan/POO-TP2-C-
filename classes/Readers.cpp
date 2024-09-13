@@ -4,17 +4,31 @@
 #include <locale>
 #include <algorithm>
 #include <memory> 
+#include <filesystem>
+#include <fstream> 
+#include <map>
 
 using namespace std;
-namespace fs = filesystem;
+namespace fs = std::filesystem;
 
-// Inicialização das variáveis estáticas
 const string Readers::DOCENTES = "docentes.csv";
 const string Readers::OCORRENCIAS = "ocorrencias.csv";
 const string Readers::VEICULOS = "veiculos.csv";
 const string Readers::QUALIS = "qualis.csv";
 const string Readers::PUBLICACOES = "publicacoes.csv";
 const string Readers::REGRAS = "regras.csv";
+
+string Readers::readDiretorio(int argc, char* argv[]) {
+    if (argc < 2 || !fs::is_directory(argv[1])) {
+        throw invalid_argument("Seu programa deve ser executado da seguinte forma: "
+                               "seu_programa <DIRETORIO/ONDE/ESTÃO/OS/CSV>");
+    }
+    string diretorio(argv[1]);
+    if (diretorio.back() != '/') {
+        diretorio += '/';
+    }
+    return diretorio;
+}
 
 vector<int> Readers::reader_data(const string& data_str) {
     stringstream aux(data_str);
@@ -32,18 +46,6 @@ vector<int> Readers::reader_data(const string& data_str) {
     return data;
 }
 
-string Readers::readDiretorio(int argc, char* argv[]) {
-    if (argc < 2 || !fs::is_directory(argv[1])) {
-        throw invalid_argument("Seu programa deve ser executado da seguinte forma: "
-                               "seu_programa <DIRETORIO/ONDE/ESTÃO/OS/CSV>");
-    }
-    string diretorio(argv[1]);
-    if (diretorio.back() != '/') {
-        diretorio += '/';
-    }
-    return diretorio;
-}
-
 vector<int> Readers::readAnoRecredenciamento() {
     int ano;
     cout << "Digite o ano do recredenciamento: ";
@@ -51,17 +53,69 @@ vector<int> Readers::readAnoRecredenciamento() {
     return {1, 1, ano};
 }
 
+bool Readers::dataValida(const std::vector<int>& inicio, const std::vector<int>& fim, const std::vector<int>& alvo) {
+    // Verificar se as datas são válidas (possuem 3 elementos: dia, mês, ano)
+    if (inicio.size() != 3 || fim.size() != 3 || alvo.size() != 3) {
+        // Tratar erro de formato de data, se necessário
+        return false; 
+    }
+
+    int anoInicio = inicio[2], mesInicio = inicio[1], diaInicio = inicio[0];
+    int anoFim = fim[2], mesFim = fim[1], diaFim = fim[0];
+    int anoAlvo = alvo[2], mesAlvo = alvo[1], diaAlvo = alvo[0];
+
+    // Comparar anos
+    if (anoAlvo < anoInicio || anoAlvo > anoFim) {
+        return false;
+    } else if (anoAlvo == anoInicio && mesAlvo < mesInicio) {
+        return false;
+    } else if (anoAlvo == anoFim && mesAlvo > mesFim) {
+        return false;
+    } else if (anoAlvo == anoInicio && mesAlvo == mesInicio && diaAlvo < diaInicio) {
+        return false;
+    } else if (anoAlvo == anoFim && mesAlvo == mesFim && diaAlvo > diaFim) {
+        return false;
+    }
+
+    return true; 
+}
+
+vector<string> Readers::splitString(const string& str, char delimiter) {
+    vector<string> tokens;
+    stringstream ss(str);
+    string token;
+    while (getline(ss, token, delimiter)) {
+        tokens.push_back(token);
+    }
+    return tokens;
+}
+
+vector<int> Readers::convertToIntVector(const vector<string>& strVector) {
+    vector<int> intVector;
+    for (const string& str : strVector) {
+        // Tratar erro de conversão se necessário
+        intVector.push_back(stoi(str));
+    }
+    return intVector;
+}
+
 void Readers::readPosGraduacao(const string& diretorio, const vector<int>& dataRecredenciamento, PPGI& ufes) {
     readDocentes(diretorio, ufes);
     readOcorrencias(diretorio, dataRecredenciamento, ufes);
-    auto veiculos = readVeiculos(diretorio);
+    map<string, shared_ptr<Veiculo>> veiculos;
+    veiculos = readVeiculos(diretorio);  
     readQualis(diretorio, dataRecredenciamento, veiculos);
+    
+    // for (const auto& [sigla, veiculo] : veiculos) {
+    //     veiculo->printVeiculo();
+    // }
+
     readPublicacoes(diretorio, dataRecredenciamento, ufes, veiculos);
     readRegras(diretorio, dataRecredenciamento, ufes);
 }
 
-void Readers::readDocentes(const string& diretorio, PPGI& ufes) {
-    ifstream arquivo(diretorio + DOCENTES);
+void Readers::readDocentes(const string diretorio, PPGI& ufes){
+    ifstream arquivo(diretorio + Readers::DOCENTES);
     string linha;
 
     if (arquivo.is_open()) {
@@ -75,10 +129,17 @@ void Readers::readDocentes(const string& diretorio, PPGI& ufes) {
             getline(ss, dataNascimentoStr, ';');
             getline(ss, dataIngressoStr, ';');
 
-            vector<int> dataNascimento = reader_data(dataNascimentoStr);
-            vector<int> dataIngresso = reader_data(dataIngressoStr);
+            // cout << codigo << endl;
+            // cout << nome << endl;
+            // cout << dataNascimentoStr << endl;
+            // cout << dataIngressoStr << endl;
 
-            ufes.add_docente(make_shared<Docente>(codigo, nome, dataNascimento, dataIngresso)); 
+            vector<int> dataNascimento = Readers::reader_data(dataNascimentoStr);
+            vector<int> dataIngresso = Readers::reader_data(dataIngressoStr);
+            Docente docente = Docente(nome, codigo, dataNascimento, dataIngresso);
+            //docente.imprime();
+
+            ufes.addDocente(docente); 
         }
         arquivo.close();
     } else {
@@ -86,302 +147,245 @@ void Readers::readDocentes(const string& diretorio, PPGI& ufes) {
     }
 }
 
+
 void Readers::readOcorrencias(const string& diretorio, const vector<int>& dataRecredenciamento, PPGI& ufes) {
-    ifstream arquivo(diretorio + OCORRENCIAS);
+    ifstream arquivo(diretorio + Readers::OCORRENCIAS);
     string linha;
 
     if (arquivo.is_open()) {
-        getline(arquivo, linha); // Ignorar cabeçalho
+        getline(arquivo, linha); // Ignora o cabeçalho
 
         while (getline(arquivo, linha)) {
             stringstream ss(linha);
-            string codigo, evento, inicioStr, fimStr;
+            string codigo, evento, dataInicioStr, dataFimStr;
+
             getline(ss, codigo, ';');
             getline(ss, evento, ';');
-            getline(ss, inicioStr, ';');
-            getline(ss, fimStr, ';');
+            getline(ss, dataInicioStr, ';');
+            getline(ss, dataFimStr, ';');
 
-            vector<int> inicio = reader_data(inicioStr);
-            vector<int> fim = reader_data(fimStr);
+            // Converter datas para vetor<int>
+            vector<int> dataInicio = reader_data(dataInicioStr);
+            vector<int> dataFim = reader_data(dataFimStr);
 
-            // **Correção:** Utiliza get_docentes() que retorna uma referência
-            for (auto& docente : ufes.get_docentes()) { 
-                if (docente->get_codigo() == codigo) {
-                    if (!Regra::dataValida(inicio, fim, dataRecredenciamento) &&
-                        !(evento == "Licença Maternidade" && fim[2] == dataRecredenciamento[2] - 1)) {
-                        continue;
-                    }
+            // Obter referência ao docente (se existir)
+            Docente* docente = ufes.getDocentePorCodigo(codigo); 
+            //docente->imprime();
 
-                    if (evento == "Bolsista CNPq") {
-                        docente->set_bolsista(true);
-                    } else if (evento == "Coordenador") {
-                        docente->set_coordenador(true);
+            if (docente != nullptr) { 
+                //cout << "entrou" << endl;
+                // Verificar se a ocorrência está dentro do período de recredenciamento
+                if ((Readers::dataValida(dataInicio, dataFim, dataRecredenciamento))) {
+                    if (evento == "Coordenador") {
+                        //cout << "entrou2" << endl;
+                        docente->setCoordenador(true);
                     } else if (evento == "Licença Maternidade") {
-                        docente->set_licenciado(true);
-                    }
-                    break; // Para o loop se o docente for encontrado
+                        docente->setLicenciado(true);
+                    } else if(evento == "Bolsista CNPq"){
+                        docente->setBolsista(true);
+                    } 
+                    
                 }
+            } else {
+                cerr << "Aviso: Docente com código " << codigo << " não encontrado para a ocorrência." << endl;
             }
         }
         arquivo.close();
     } else {
-        throw runtime_error("Erro ao abrir o arquivo de ocorrências.");
+        throw runtime_error("Erro ao abrir o arquivo de ocorrências: " + diretorio + OCORRENCIAS);
     }
 }
 
-unordered_map<string, shared_ptr<Veiculo>> Readers::readVeiculos(const string& diretorio) {
-    unordered_map<string, shared_ptr<Veiculo>> veiculos;
+map<string, shared_ptr<Veiculo>>& Readers::readVeiculos(const string& diretorio) {
     ifstream arquivo(diretorio + VEICULOS);
     string linha;
+
+    // Criar o mapa de veículos (será retornado por referência)
+    static map<string, shared_ptr<Veiculo>> veiculos; 
 
     if (arquivo.is_open()) {
         getline(arquivo, linha); // Ignorar cabeçalho
 
         while (getline(arquivo, linha)) {
-            stringstream ss(linha);
-            string sigla, nome, tipo, impactoStr, issn;
+            std::stringstream ss(linha);
+            std::string sigla, nome, tipo, impactoStr, issn;
+
             getline(ss, sigla, ';');
             getline(ss, nome, ';');
             getline(ss, tipo, ';');
             getline(ss, impactoStr, ';');
             getline(ss, issn, ';');
 
-            double impacto = impactoStr.empty() ? 0 : stod(impactoStr);
+            // Converter impacto para int 
+            int impacto = std::stoi(impactoStr);
 
-            if (tipo != "C" && tipo != "P") {
-                stringstream mensagem;
-                mensagem << "Tipo de veículo desconhecido para veículo " << sigla << ": " << tipo << ".";
-                throw invalid_argument(mensagem.str());
-            }
+            // Criar objeto Veiculo 
+            Veiculo veiculo(sigla, nome, tipo, impacto, issn); 
+            //veiculo.printVeiculo();
 
-            veiculos[sigla] = make_shared<Veiculo>(sigla, nome, tipo, impacto, issn);
+            // Inserir no map usando a sigla como chave
+            veiculos[sigla] = make_shared<Veiculo>(veiculo);
         }
+
         arquivo.close();
     } else {
-        throw runtime_error("Erro ao abrir o arquivo de veículos.");
+        throw std::runtime_error("Erro ao abrir o arquivo de veículos: " + diretorio + "veiculos.csv");
     }
+    //cout << "terminei" << endl;
     return veiculos;
 }
 
-void Readers::readQualis(const string& diretorio, const vector<int>& dataRecredenciamento,
-                       unordered_map<string, shared_ptr<Veiculo>>& veiculos) {
+void Readers::readQualis(const string& diretorio, const vector<int>& dataRecredenciamento, 
+                         map<string, shared_ptr<Veiculo>>& veiculos) {
+
     ifstream arquivo(diretorio + QUALIS);
     string linha;
 
     if (arquivo.is_open()) {
-        getline(arquivo, linha); // Ignorar cabeçalho
+        getline(arquivo, linha); // Ignorar o cabeçalho
 
         while (getline(arquivo, linha)) {
             stringstream ss(linha);
-            string anoStr, sigla, qualificacao;
-            getline(ss, anoStr, ';');
-            getline(ss, sigla, ';');
-            getline(ss, qualificacao, ';');
+            string anoStr, nomeVeiculo, qualis;
 
+            getline(ss, anoStr, ';');
+            getline(ss, nomeVeiculo, ';');
+            getline(ss, qualis, ';');
+
+            // Converter ano para int
             int ano = stoi(anoStr);
 
-            if (ano >= dataRecredenciamento[2]) {
-                continue;
-            }
+            Qualis quali(ano,qualis);
 
-            if (find(Qualis::VALORES.begin(), Qualis::VALORES.end(), qualificacao) == Qualis::VALORES.end()) {
-                stringstream mensagem;
-                mensagem << "Qualis desconhecido para qualificação do veículo "
-                        << sigla << " no ano " << ano << ": " << qualificacao << ".";
-                throw invalid_argument(mensagem.str());
-            }
+            // Verificar se o ano está dentro do período de recredenciamento
+            if (dataValida({1, 1, ano}, dataRecredenciamento, dataRecredenciamento)) { 
+                // Buscar o veículo no map
+                
+                auto it = veiculos.find(nomeVeiculo);
 
-            if (veiculos.count(sigla) > 0) {
-                veiculos[sigla]->setQualis(make_unique<Qualis>(ano, qualificacao));
-            } else {
-                stringstream mensagem;
-                mensagem << "Sigla de veículo não definida usada na qualificação do ano \""
-                        << ano << "\": " << sigla << ".";
-                throw invalid_argument(mensagem.str());
+                if (it == veiculos.end()) {
+                    //throw std::out_of_range("Veículo não encontrado: " + nomeVeiculo);
+                    continue;
+                } else {
+                    // Veículo encontrado, atualizar o Qualis
+                    it->second->setQualis(quali); 
+                    //it->second->printVeiculo();
+                }
             }
         }
         arquivo.close();
     } else {
-        throw runtime_error("Erro ao abrir o arquivo de Qualis.");
+        throw runtime_error("Erro ao abrir o arquivo de qualis: " + diretorio + QUALIS);
     }
 }
 
-void Readers::readPublicacoes(const string& diretorio, const vector<int>& dataRecredenciamento,
-                             PPGI& ufes, unordered_map<string, shared_ptr<Veiculo>>& veiculos) {
+void Readers::readPublicacoes(const string& diretorio, 
+                              const vector<int>& dataRecredenciamento, 
+                              PPGI& ufes, 
+                              map<string, shared_ptr<Veiculo>>& veiculos) {
+
     ifstream arquivo(diretorio + PUBLICACOES);
     string linha;
 
     if (arquivo.is_open()) {
-        getline(arquivo, linha); // Ignorar cabeçalho
+        getline(arquivo, linha); // Ignora o cabeçalho
 
         while (getline(arquivo, linha)) {
             stringstream ss(linha);
-            string anoStr, veiculo, titulo, autoresStr, numeroStr, volumeStr, local, paginaInicialStr, paginaFinalStr;
+            string anoStr, veiculoStr, titulo, autoresStr, numeroStr, volumeStr, local, pageStartStr, pageEndStr;
+
             getline(ss, anoStr, ';');
-            getline(ss, veiculo, ';');
+            getline(ss, veiculoStr, ';');
             getline(ss, titulo, ';');
             getline(ss, autoresStr, ';');
             getline(ss, numeroStr, ';');
             getline(ss, volumeStr, ';');
             getline(ss, local, ';');
-            getline(ss, paginaInicialStr, ';');
-            getline(ss, paginaFinalStr, ';');
+            getline(ss, pageStartStr, ';');
+            getline(ss, pageEndStr, ';');
 
+            // Conversão de tipos
             int ano = stoi(anoStr);
-            int numero = numeroStr.empty() ? 0 : stoi(numeroStr);
+            int numero = stoi(numeroStr);
             int volume = volumeStr.empty() ? 0 : stoi(volumeStr);
-            int paginaInicial = paginaInicialStr.empty() ? 0 : stoi(paginaInicialStr);
-            int paginaFinal = paginaFinalStr.empty() ? 0 : stoi(paginaFinalStr);
+            int pageStart = pageStartStr.empty() ? 0 : stoi(pageStartStr);
+            int pageEnd = pageEndStr.empty() ? 0 : stoi(pageEndStr);
 
-            // **Correção:** Utiliza make_shared para criar o shared_ptr
-            shared_ptr<Publicacao> publicacao = make_shared<Publicacao>(ano, titulo, numero, volume, local, paginaInicial, paginaFinal);
-
-            stringstream autoresStream(autoresStr);
+            //cria o vetor de autores
+            vector<string> autores;
+            stringstream ssAutores(autoresStr);
             string autor;
-
-            while (getline(autoresStream, autor, ',')) {
-                autor.erase(remove(autor.begin(), autor.end(), ' '), autor.end()); // Remover espaços em branco
-
-                bool autorEncontrado = false;
-
-                // **Correção:** Utiliza get_docentes() que retorna uma referência
-                for (auto& docente : ufes.get_docentes()) {
-                    if (docente->get_codigo() == autor) {
-                        // **Correção:** Passa o shared_ptr por referência
-                        docente->add_publicacao(publicacao); 
-                        publicacao->add_autor(docente);
-                        autorEncontrado = true;
-                        break;
-                    }
-                }
-
-                if (!autorEncontrado) {
-                    stringstream mensagem;
-                    mensagem << "Código de docente não definido usado na publicação \""
-                            << titulo << "\": " << autor << ".";
-                    throw invalid_argument(mensagem.str());
-                }
+            while (getline(ssAutores, autor, ',')) { 
+                autores.push_back(autor);
             }
 
-            if (veiculos.count(veiculo) > 0) {
-                publicacao->set_veiculo(veiculos[veiculo]);
-            } else {
-                stringstream mensagem;
-                mensagem << "Sigla de veículo não definida usada na publicação \""
-                        << titulo << "\": " << veiculo << ".";
-                throw invalid_argument(mensagem.str());
-            }
+            //encontrar o veiculo no map
+            auto it = veiculos.find(veiculoStr);
 
-            // **Correção:** Passa o shared_ptr por referência 
-            ufes.add_publicacao(publicacao);
+            if (it == veiculos.end()) {
+                //throw std::out_of_range("Veículo não encontrado: " + nomeVeiculo);
+                continue;
+            }
+            
+            // Criar objeto Publicacao
+            Publicacao publicacao(ano, it->second, titulo, autores, numero, volume, local, pageStart, pageEnd);
+
+            //publicacao.imprime();
+            ufes.addPublicacao(publicacao);
+
         }
         arquivo.close();
-    } else {
-        throw runtime_error("Erro ao abrir o arquivo de publicações.");
+    } 
+    else {
+        throw runtime_error("Erro ao abrir o arquivo de publicacoes: " + diretorio + PUBLICACOES);
     }
 }
 
 void Readers::readRegras(const string& diretorio, const vector<int>& dataRecredenciamento, PPGI& ufes) {
-    vector<Regra> regras;
     ifstream arquivo(diretorio + REGRAS);
     string linha;
 
     if (arquivo.is_open()) {
-        getline(arquivo, linha); // Ignorar cabeçalho
+        getline(arquivo, linha); // Ignora o cabeçalho
 
         while (getline(arquivo, linha)) {
             stringstream ss(linha);
-            string inicioStr, fimStr, qualisPontosStr, pontosStr, anosPontosStr;
-            string qualisPeriodicosStr, qtdPeriodicosStr, anosPeriodicosStr, pontosMinimosStr;
-            getline(ss, inicioStr, ';');
-            getline(ss, fimStr, ';');
-            getline(ss, qualisPontosStr, ';');
-            getline(ss, pontosStr, ';');
+            string dataInicioStr, dataFimStr, qualisStr, pontosQualisStr, anosPontosStr, 
+                   qualis2Str, qualis2QtdMinimasStr, anosArtigosStr, minimoPontosStr;
+
+            // Ler dados da linha
+            getline(ss, dataInicioStr, ';');
+            getline(ss, dataFimStr, ';');
+            getline(ss, qualisStr, ';');
+            getline(ss, pontosQualisStr, ';');
             getline(ss, anosPontosStr, ';');
-            getline(ss, qualisPeriodicosStr, ';');
-            getline(ss, qtdPeriodicosStr, ';');
-            getline(ss, anosPeriodicosStr, ';');
-            getline(ss, pontosMinimosStr, ';');
+            getline(ss, qualis2Str, ';');
+            getline(ss, qualis2QtdMinimasStr, ';');
+            getline(ss, anosArtigosStr, ';');
+            getline(ss, minimoPontosStr, ';');
 
-            vector<int> inicio = reader_data(inicioStr);
-            vector<int> fim = reader_data(fimStr);
-
-            // Ler e processar qualisPontos
-            unordered_map<string, double> qualisPontos;
-            stringstream qualisPontosSS(qualisPontosStr);
-            string qualisValor;
-            size_t pos = 0;
-            while ((pos = qualisPontosStr.find('-')) != string::npos) {
-                qualisValor = qualisPontosStr.substr(0, pos);
-                if (find(Qualis::VALORES.begin(), Qualis::VALORES.end(), qualisValor) == Qualis::VALORES.end()) {
-                    stringstream mensagem;
-                    mensagem << "Qualis desconhecido para regras de " << inicioStr << ": " << qualisValor << ".";
-                    throw invalid_argument(mensagem.str());
-                }
-                qualisPontosStr.erase(0, pos + 1);
-            }
-
-            // Ler e processar pontos
-            vector<double> pontos;
-            stringstream pontosSS(pontosStr);
-            string pontosValor;
-            while (getline(pontosSS, pontosValor, '-')) {
-                pontos.push_back(stod(pontosValor));
-            }
-
-            // Verificar se qualis e pontos têm o mesmo tamanho
-            if (qualisPontos.size() != pontos.size()) {
-                throw invalid_argument("Número diferente de valores para Qualis e Pontos.");
-            }
-
-            // Combinar qualis e pontos em qualisPontos
-            int i = 0;
-            for (const auto& qualis : qualisPontos) {
-                qualisPontos[qualis.first] = pontos[i++];
-            }
-
-            // Ler os outros valores
+            // Converter strings para os tipos apropriados
+            vector<int> dataInicio = reader_data(dataInicioStr);
+            vector<int> dataFim = reader_data(dataFimStr);
             int anosPontos = stoi(anosPontosStr);
-            int quantidadePeriodicosNecessarios = stoi(qtdPeriodicosStr);
-            int anosPeriodicos = stoi(anosPeriodicosStr);
-            double pontosMinimos = stod(pontosMinimosStr);
+            int anosArtigos = stoi(anosArtigosStr);
+            int minimoPontos = stoi(minimoPontosStr);
 
-            // Ler e processar periodicosNecessarios
-            vector<string> periodicosNecessarios;
-            stringstream periodicosNecessariosSS(qualisPeriodicosStr);
-            string periodico;
-            while (getline(periodicosNecessariosSS, periodico, '-')) {
-                if (find(Qualis::VALORES.begin(), Qualis::VALORES.end(), periodico) == Qualis::VALORES.end()) {
-                    stringstream mensagem;
-                    mensagem << "Qualis desconhecido para regras de " << inicioStr << ": " << periodico << ".";
-                    throw invalid_argument(mensagem.str());
-                }
-                periodicosNecessarios.push_back(periodico);
-            }
+            // Criar vetores para qualis, pontosQualis, qualis2, e qualis2QtdMinimas
+            vector<string> qualis = splitString(qualisStr, ',');
+            vector<int> pontosQualis = convertToIntVector(splitString(pontosQualisStr, ','));
+            vector<string> qualis2 = splitString(qualis2Str, ',');
+            vector<int> qualis2QtdMinimas = convertToIntVector(splitString(qualis2QtdMinimasStr, ','));
 
-            // Verificar se já existe uma regra para o mesmo período
-            for (const Regra& regra : regras) {
-                if (regra.dataRepetida(inicio, fim)) {
-                    stringstream mensagem;
-                    mensagem << "Múltiplas regras de pontuação para o mesmo período: "
-                            << inicioStr << " : " << fimStr << ".";
-                    throw invalid_argument(mensagem.str());
-                }
-            }
+            // Criar objeto Regra
+            Regra regra(dataInicio, dataFim, qualis, pontosQualis, anosPontos, qualis2, qualis2QtdMinimas, 
+                        anosArtigos, minimoPontos);
 
-            regras.push_back(Regra(inicio, fim, qualisPontos, anosPontos, periodicosNecessarios,
-                                   quantidadePeriodicosNecessarios, anosPeriodicos, pontosMinimos));
-        }
-
-        // Encontrar a regra para o período do recredenciamento
-        for (const Regra& regra : regras) {
-            if (regra.dataContida(dataRecredenciamento)) {
-                ufes.set_regra(regra);
-                break;
-            }
+            // Adicionar regra ao PPGI
+            ufes.addRegra(regra);
         }
         arquivo.close();
     } else {
-        throw runtime_error("Erro ao abrir o arquivo de regras.");
+        throw runtime_error("Erro ao abrir o arquivo de regras: " + diretorio + REGRAS);
     }
 }
