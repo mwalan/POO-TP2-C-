@@ -1,33 +1,54 @@
 #include "Veiculo.hpp"
+#include <iostream>
 
+// Construtor
 Veiculo::Veiculo(const string& sigla, const string& nome, const string& tipo, double impacto, const string& issn)
-    : sigla(sigla), nome(nome), tipo(tipo), impacto(impacto), issn(issn), qualis(nullptr) {}
+    : sigla(sigla), nome(nome), tipo(tipo), impacto(impacto), issn(issn) {}
 
+// Getters
 string Veiculo::getSigla() const {
-    return this->sigla;
+    return sigla;
 }
 
 string Veiculo::getNome() const {
-    return this->nome;
+    return nome;
 }
 
 string Veiculo::getTipo() const {
-    return this->tipo;
+    return tipo;
 }
 
 double Veiculo::getImpacto() const {
-    return this->impacto;
+    return impacto;
 }
 
-string Veiculo::getIssn() const {
-    return this->issn;
+string Veiculo::getISSN() const {
+    return issn;
 }
 
-Qualis* Veiculo::getQualis() const {
-    return qualis.get(); // Retorna um ponteiro cru para o Qualis
+Qualis Veiculo::getQualis() const {
+    return qualis; 
 }
 
-void Veiculo::setQualis(unique_ptr<Qualis> novoQualis) {
-    // A transferência de posse é automática com unique_ptr
-    qualis = move(novoQualis); 
+void Veiculo::setQualis(const Qualis& qualis) {
+    this->qualis = qualis; 
+}
+
+void Veiculo::printVeiculo(){
+    string sigla = getSigla();
+    string nome = getNome();;
+    string tipo = getTipo();
+    double impacto = getImpacto();
+    string issn = getISSN();
+    int qualisAno = qualis.getAno();
+    string qualisvalor = qualis.getValor();
+
+    cout << "sigla: " << sigla << endl;
+    cout << "nome: " << nome << endl;
+    cout << "tipo: " << tipo << endl;
+    cout << "impacto: " << impacto << endl;
+    cout << "issn: " << issn << endl;
+    cout << "qualisAno: " << qualisAno << endl;
+    cout << "qualisValor: " << qualisvalor << endl;
+    cout << endl;
 }
