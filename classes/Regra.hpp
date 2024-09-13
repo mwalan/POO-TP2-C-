@@ -1,45 +1,41 @@
 #ifndef REGRA_HPP
 #define REGRA_HPP
 
-#include <iostream>
 #include <vector>
-#include <unordered_map>
+#include <string>
 
 using namespace std;
 
 class Regra {
 private:
-    vector<int> inicio; // {ano, mes, dia}
-    vector<int> fim; // {ano, mes, dia}
-    unordered_map<string, double> qualisPontos;
+    vector<int> dataInicio;
+    vector<int> dataFim;
+    vector<string> qualis;
+    vector<int> pontosQualis;
     int anosPontos;
-    vector<string> periodicosNecessarios;
-    int quantidadePeriodicosNecessarios;
-    int anosPeriodicos;
-    double pontosMinimos;
+    vector<string> qualis2;
+    vector<int> qualis2QtdMinimas;
+    int anosArtigos;
+    int minimoPontos;
 
 public:
-    Regra(const vector<int>& inicio,
-          const vector<int>& fim,
-          const unordered_map<string, double>& qualisPontos,
-          int anosPontos,
-          const vector<string>& periodicosNecessarios,
-          int quantidadePeriodicosNecessarios,
-          int anosPeriodicos,
-          double pontosMinimos);
+    // Construtor
+    Regra(const vector<int>& dataInicio, const vector<int>& dataFim, const vector<string>& qualis,
+          const vector<int>& pontosQualis, int anosPontos, const vector<string>& qualis2,
+          const vector<int>& qualis2QtdMinimas, int anosArtigos, int minimoPontos);
 
-    vector<int> getInicio() const;
-    vector<int> getFim() const;
-    unordered_map<string, double> getQualisPontos() const;
+    // Getters
+    vector<int> getDataInicio() const;
+    vector<int> getDataFim() const;
+    vector<string> getQualis() const;
+    vector<int> getPontosQualis() const;
     int getAnosPontos() const;
-    vector<string> getPeriodicosNecessarios() const;
-    int getQuantidadePeriodicosNecessarios() const;
-    int getAnosPeriodicos() const;
-    double getPontosMinimos() const;
+    vector<string> getQualis2() const;
+    vector<int> getQualis2QtdMinimas() const;
+    int getAnosArtigos() const;
+    int getMinimoPontos() const;
 
-    static bool dataValida(const vector<int>& inicio, const vector<int>& fim, const vector<int>& alvo);
-    bool dataRepetida(const vector<int>& inicio, const vector<int>& fim) const;
-    bool dataContida(const vector<int>& alvo) const;
+    void imprimirRegra() const;
 };
 
 #endif
