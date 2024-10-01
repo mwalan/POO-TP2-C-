@@ -56,7 +56,6 @@ vector<int> Readers::readAnoRecredenciamento() {
 bool Readers::dataValida(const std::vector<int>& inicio, const std::vector<int>& fim, const std::vector<int>& alvo) {
     // Verificar se as datas são válidas (possuem 3 elementos: dia, mês, ano)
     if (inicio.size() != 3 || fim.size() != 3 || alvo.size() != 3) {
-        // Tratar erro de formato de data, se necessário
         return false; 
     }
 
@@ -93,7 +92,6 @@ vector<string> Readers::splitString(const string& str, char delimiter) {
 vector<int> Readers::convertToIntVector(const vector<string>& strVector) {
     vector<int> intVector;
     for (const string& str : strVector) {
-        // Tratar erro de conversão se necessário
         intVector.push_back(stoi(str));
     }
     return intVector;
@@ -105,11 +103,6 @@ void Readers::readPosGraduacao(const string& diretorio, const vector<int>& dataR
     map<string, shared_ptr<Veiculo>> veiculos;
     veiculos = readVeiculos(diretorio);  
     readQualis(diretorio, dataRecredenciamento, veiculos);
-    
-    // for (const auto& [sigla, veiculo] : veiculos) {
-    //     veiculo->printVeiculo();
-    // }
-
     readPublicacoes(diretorio, dataRecredenciamento, ufes, veiculos);
     readRegras(diretorio, dataRecredenciamento, ufes);
 }
@@ -264,7 +257,6 @@ void Readers::readQualis(const string& diretorio, const vector<int>& dataRecrede
                 auto it = veiculos.find(nomeVeiculo);
 
                 if (it == veiculos.end()) {
-                    //throw std::out_of_range("Veículo não encontrado: " + nomeVeiculo);
                     continue;
                 } else {
                     // Veículo encontrado, atualizar o Qualis

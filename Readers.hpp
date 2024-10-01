@@ -1,7 +1,7 @@
 #include "PPGI.hpp"
 #include "Veiculo.hpp"
 #include "Qualis.hpp"
-#include "Regra.hpp"
+//#include "Regra.hpp"
 #include "Publicacao.hpp"
 #include <vector>
 #include <string> 

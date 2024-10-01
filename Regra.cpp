@@ -52,5 +52,5 @@ void Regra::imprimirRegra() const {
 
     cout << "Anos Artigos: " << anosArtigos << endl;
     cout << "Mínimo Pontos: " << minimoPontos << endl;
-    cout << "--------------------" << endl; // Separador visual
+    cout << "--------------------" << endl; 
 }
